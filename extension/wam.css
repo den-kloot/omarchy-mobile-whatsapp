@@ -1,0 +1,242 @@
+/* Omarchy Mobile WhatsApp: WhatsApp Web as a phone app, one pane at a time.
+ * wam.js names WhatsApp's columns (data-wam: rail, drawers, list, main, info)
+ * and says on <html> what is open: wam-chat (a conversation), wam-tab (a
+ * tab other than Chats, or a drawer such as New chat), wam-detail (a page
+ * opened from such a tab), wam-info (contact info and the like).
+ * Selectors lean on WhatsApp's ids and data-testid hooks, never on its
+ * generated class names. */
+
+:root {
+  --wam-bar: 53px;
+}
+
+/* The app fills the phone (WhatsApp wants at least 748 px); every column
+ * covers the screen, and the state decides which one shows. */
+html.wam #app .two {
+  display: block !important;
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  top: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+html.wam #app .two > [data-wam] {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: none !important;
+  border: none !important;
+}
+
+html.wam #app .two > [data-wam="list"] {
+  bottom: var(--wam-bar) !important;
+}
+
+html.wam #pane-side {
+  overflow-x: hidden !important;
+}
+
+html.wam #app .two > [data-wam="main"] {
+  z-index: 350 !important;
+}
+
+html.wam #app .two > [data-wam="info"] {
+  z-index: 360 !important;
+}
+
+/* The tab list (Calls, Status, ...) and drawers over the chat list, above
+ * the tab bar; a page opened from them over everything. */
+html.wam [data-testid="drawer-left"],
+html.wam [data-testid="drawer-middle"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+html.wam [data-testid="drawer-left"] {
+  bottom: var(--wam-bar) !important;
+}
+
+html.wam [data-testid="drawer-fullscreen"] {
+  left: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* ---- Hide what is not on top ------------------------------------------- */
+
+/* Nothing open: the chat list (or a tab's list) and the tab bar */
+html.wam:not(.wam-chat) #app .two > [data-wam="main"],
+html.wam:not(.wam-detail) [data-testid="drawer-middle"],
+html.wam:not(.wam-info) #app .two > [data-wam="info"],
+/* A conversation or a page: no list, no tab bar */
+html.wam.wam-chat #app .two > [data-wam="list"],
+html.wam.wam-chat #app .two > [data-wam="rail"],
+html.wam.wam-chat [data-testid="drawer-left"],
+html.wam.wam-detail #app .two > [data-wam="list"],
+html.wam.wam-detail #app .two > [data-wam="rail"],
+html.wam.wam-detail [data-testid="drawer-left"] {
+  visibility: hidden !important;
+}
+
+/* The drawers' layer must not swallow taps meant for the chat below */
+html.wam #app .two > [data-wam="drawers"] {
+  pointer-events: none !important;
+}
+
+html.wam.wam-tab #app .two > [data-wam="drawers"] [data-testid="drawer-left"],
+html.wam.wam-detail #app .two > [data-wam="drawers"] [data-testid="drawer-middle"] {
+  pointer-events: auto !important;
+}
+
+/* ---- The left icon rail as a tab bar at the bottom -------------------- */
+
+html.wam #app .two > [data-wam="rail"] {
+  top: auto !important;
+  height: var(--wam-bar) !important;
+  z-index: 340 !important;
+  display: flex !important;
+  padding: 6px 4px !important;
+  border-top: 1px solid rgba(134, 150, 160, 0.15) !important;
+}
+
+html.wam [data-wam="rail"] > div {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+html.wam [data-wam="rail"] [data-testid="navbar-primary-section"],
+html.wam [data-wam="rail"] [data-testid="navbar-primary-section"] > div,
+html.wam [data-wam="rail"] [data-testid="navbar-footer-section"],
+html.wam [data-wam="rail"] [data-testid="navbar-footer-section"] > div {
+  display: contents !important;
+}
+
+html.wam [data-wam="rail"] hr {
+  display: none !important;
+}
+
+/* ---- Dialogs fit the screen -------------------------------------------- */
+
+html.wam [role="dialog"] {
+  min-width: 0 !important;
+  max-width: 100vw !important;
+}
+
+html.wam [data-testid="popup-contents"] {
+  max-width: calc(100vw - 16px) !important;
+}
+
+/* Media (photos, documents and links from all chats): full screen, its
+ * title and buttons above its tabs */
+html.wam [role="dialog"]:has([data-testid="media-hub-modal"]) {
+  width: 100vw !important;
+  height: 100% !important;
+}
+
+html.wam [data-testid="media-hub-modal"] {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  border-radius: 0 !important;
+}
+
+html.wam [data-testid="media-hub-modal"] > div,
+html.wam [data-testid="media-hub-modal"] [data-testid="popup-contents"] {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+html.wam [data-testid="media-hub-modal"] [data-testid="popup-contents"] > div:first-child {
+  flex-wrap: wrap !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+html.wam [data-testid="media-hub-modal"] [data-testid="popup-contents"] > div:first-child > div:nth-child(1) {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+
+html.wam [data-testid="media-hub-modal"] [data-testid="popup-contents"] > div:first-child > div:nth-child(2) {
+  order: 2 !important;
+  width: 100% !important;
+}
+
+html.wam [data-testid="media-hub-modal"] [data-testid="popup-contents"] > div:last-child {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-height: 0 !important;
+}
+
+/* ---- Emoji, GIF and sticker panel -------------------------------------- */
+
+/* Laid out for 560 px (12 emojis a row); wam.js scales it to the screen's
+ * width, from its left edge (WhatsApp centres it on the emoji button). */
+html.wam #expressions-panel-container [role="application"] {
+  left: 0 !important;
+  transform-origin: left bottom !important;
+}
+
+/* ---- Back arrow in a conversation -------------------------------------- */
+
+html.wam.wam-chat #main > header {
+  padding-left: 44px !important;
+}
+
+#wam-back {
+  display: none;
+}
+
+html.wam.wam-chat:not(.wam-info):not(.wam-detail) #wam-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 12px;
+  left: 4px;
+  width: 40px;
+  height: 40px;
+  z-index: 1000;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--WDS-content-default, #e9edef);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.wam.wam-chat #wam-back:active {
+  background: rgba(134, 150, 160, 0.2);
+}

@@ -1,0 +1,24 @@
+#!/bin/bash
+# Omarchy Mobile WhatsApp: WhatsApp Web as a phone app (README.md).
+#
+# Chromium with its own profile, so it is its own process with its own flags:
+#  - a desktop user agent: Omarchy Mobile gives Chromium an Android one, and
+#    WhatsApp Web answers a phone browser with "use it on your computer";
+#  - the extension, which lays the page out like the phone app;
+#  - scale 1, so the phone-wide window is a phone-sized page.
+# Flags given here come after ~/.config/chromium-flags.conf and win over it.
+#
+# Settings (environment): OMW_PROFILE (profile dir), OMW_EXTENSION (extension
+# dir), OMW_SCALE (default 1), OMW_BROWSER (default chromium).
+# Extra arguments go to Chromium.
+data="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-mobile-whatsapp"
+browser="${OMW_BROWSER:-chromium}"
+major=$("$browser" --version 2>/dev/null | grep -oE '[0-9]+' | head -1)
+run=(setsid)
+command -v uwsm-app >/dev/null && run+=(uwsm-app --)
+exec "${run[@]}" "$browser" \
+  --user-data-dir="${OMW_PROFILE:-$data/profile}" \
+  --user-agent="Mozilla/5.0 (X11; Linux $(uname -m)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${major:-150}.0.0.0 Safari/537.36" \
+  --load-extension="${OMW_EXTENSION:-$data/extension}" \
+  --force-device-scale-factor="${OMW_SCALE:-1}" \
+  --app="https://web.whatsapp.com/" "$@"
