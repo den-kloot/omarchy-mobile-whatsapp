@@ -5,6 +5,12 @@ WhatsApp Web as a phone app on [Omarchy Mobile](https://github.com/den-kloot/oma
 phone-wide screen, and its panels and menus close whenever the on-screen keyboard folds or
 unfolds. This launcher and Chromium extension fix both.
 
+| Chats | Chat | Message menu |
+| --- | --- | --- |
+| ![Chat list](docs/chats.png) | ![An open chat](docs/chat.png) | ![A message's menu](docs/message-menu.png) |
+
+(Screenshots from a Pixel 9a; names, messages and pictures are made up.)
+
 - **One pane at a time**, like the Android app: the chat list, or the open chat with a back
   arrow (the edge swipe / Escape works too). Contact info, settings and the other tabs
   open full-screen.
@@ -14,6 +20,8 @@ unfolds. This launcher and Chromium extension fix both.
   and the keyboard stays up. Without this, the tap moves the focus out of the text field,
   the keyboard folds, the window grows, WhatsApp puts the focus back, the keyboard unfolds,
   and the resize closes the panel or menu again.
+- **Only one WhatsApp**: starting it again (app menu, a key binding, a script) brings the open
+  window to the front instead of opening a second one.
 - **Follows the system theme** (light/dark).
 - The emoji panel is scaled to the screen's width.
 
@@ -42,6 +50,14 @@ is its own process with its own flags:
   answers a phone browser with "use WhatsApp on your computer";
 - **the extension** (`extension/`), which lays the page out like the phone app;
 - **scale 1**, so the phone-wide window is a phone-sized page.
+
+**Only one window.** Chromium with a running profile opens every new `--app` launch as a
+second window in the same process, so there would be two WhatsApp windows. So the launcher first asks Hyprland (`hyprctl clients -j`, needs `jq`)
+for a window of class `chrome-web.whatsapp.com…` whose process was started with this
+launcher's `--user-data-dir`, and if there is one, focuses it (Hyprland switches to its
+workspace) and exits. It checks the profile, not just the class, because Omarchy's own
+WhatsApp web app has the same class. `omarchy-mobile-whatsapp --new` skips the check. Without
+Hyprland it simply starts Chromium.
 
 Settings (environment): `OMW_PROFILE` (profile dir), `OMW_EXTENSION` (extension dir),
 `OMW_SCALE` (default 1), `OMW_BROWSER` (default `chromium`). Extra arguments go to Chromium.

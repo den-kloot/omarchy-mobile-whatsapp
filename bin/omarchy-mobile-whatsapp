@@ -8,16 +8,49 @@
 #  - scale 1, so the phone-wide window is a phone-sized page.
 # Flags given here come after ~/.config/chromium-flags.conf and win over it.
 #
+# Only one WhatsApp: if a WhatsApp window of this profile is open, it is
+# focused (Hyprland switches to its workspace) and nothing is started.
+# Otherwise Chromium would open a second WhatsApp window in the running process.
+# The window is found by its process's --user-data-dir, not by its class:
+# Omarchy's own WhatsApp web app has the same class
+# (chrome-web.whatsapp.com__-Default). `--new` as the first argument skips
+# this and always starts one.
+#
 # Settings (environment): OMW_PROFILE (profile dir), OMW_EXTENSION (extension
 # dir), OMW_SCALE (default 1), OMW_BROWSER (default chromium).
 # Extra arguments go to Chromium.
 data="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy-mobile-whatsapp"
+profile="${OMW_PROFILE:-$data/profile}"
 browser="${OMW_BROWSER:-chromium}"
+
+# The address of an open WhatsApp window of this profile, if any.
+open_window() {
+  command -v hyprctl >/dev/null && command -v jq >/dev/null || return 0
+  local address pid cmdline
+  while read -r address pid; do
+    # Chromium rewrites its argv as one space-separated string.
+    cmdline=$(tr '\0' ' ' <"/proc/$pid/cmdline" 2>/dev/null) || continue
+    if [[ " $cmdline " == *" --user-data-dir=$profile "* ]]; then
+      echo "$address"
+      return 0
+    fi
+  done < <(hyprctl clients -j 2>/dev/null |
+    jq -r '.[] | select(.class | test("^chrome-web\\.whatsapp\\.com")) | "\(.address) \(.pid)"')
+}
+
+if [[ ${1:-} == --new ]]; then
+  shift
+elif address=$(open_window) && [[ -n $address ]]; then
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$address\" })" >/dev/null 2>&1 ||
+    hyprctl dispatch focuswindow "address:$address" >/dev/null
+  exit 0
+fi
+
 major=$("$browser" --version 2>/dev/null | grep -oE '[0-9]+' | head -1)
 run=(setsid)
 command -v uwsm-app >/dev/null && run+=(uwsm-app --)
 exec "${run[@]}" "$browser" \
-  --user-data-dir="${OMW_PROFILE:-$data/profile}" \
+  --user-data-dir="$profile" \
   --user-agent="Mozilla/5.0 (X11; Linux $(uname -m)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${major:-150}.0.0.0 Safari/537.36" \
   --load-extension="${OMW_EXTENSION:-$data/extension}" \
   --force-device-scale-factor="${OMW_SCALE:-1}" \
