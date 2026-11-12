@@ -13,7 +13,7 @@ unfolds. This launcher and Chromium extension fix both.
 
 - **One pane at a time**, like the Android app: the chat list, or the open chat with a back
   arrow (the edge swipe / Escape works too). Contact info, settings and the other tabs
-  open full-screen.
+  open full-screen (also message info and contact info, which WhatsApp shows as a third column).
 - **Tabs at the bottom**: WhatsApp's left icon rail becomes a bottom tab bar.
 - **Panels and menus that work with the on-screen keyboard**: the emoji panel, the attach
   menu (+) and a message's menu (the arrow on a message: reply, edit, copy, …) stay open,

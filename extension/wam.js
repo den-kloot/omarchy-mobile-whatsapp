@@ -73,7 +73,7 @@
   const flag = (name, on) => { if (root.classList.contains(name) !== on) root.classList.toggle(name, on); };
   const tag = (el, name) => { if (el && el.dataset.wam !== name) el.dataset.wam = name; };
   const sync = () => {
-    const two = document.querySelector("#app .two");
+    const two = document.querySelector("#app .two, #app .three");
     if (two) {
       const list = document.getElementById("side")?.parentElement;
       tag(two.querySelector(":scope > header"), "rail");

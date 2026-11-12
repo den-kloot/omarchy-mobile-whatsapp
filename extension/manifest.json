@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Omarchy Mobile WhatsApp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "WhatsApp Web laid out like the phone app (one pane at a time, back arrow, tabs at the bottom), with an emoji panel and menus that work with the on-screen keyboard.",
   "homepage_url": "https://github.com/den-kloot/omarchy-mobile-whatsapp",
   "content_scripts": [

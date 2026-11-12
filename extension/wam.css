@@ -11,8 +11,9 @@
 }
 
 /* The app fills the phone (WhatsApp wants at least 748 px); every column
- * covers the screen, and the state decides which one shows. */
-html.wam #app .two {
+ * covers the screen, and the state decides which one shows. The container is
+ * .two, or .three while a right-hand panel (contact or message info) is open. */
+html.wam #app :is(.two, .three) {
   display: block !important;
   position: relative !important;
   min-width: 0 !important;
@@ -24,7 +25,7 @@ html.wam #app .two {
   overflow: hidden !important;
 }
 
-html.wam #app .two > [data-wam] {
+html.wam #app :is(.two, .three) > [data-wam] {
   position: absolute !important;
   top: 0 !important;
   bottom: 0 !important;
@@ -38,7 +39,7 @@ html.wam #app .two > [data-wam] {
   border: none !important;
 }
 
-html.wam #app .two > [data-wam="list"] {
+html.wam #app :is(.two, .three) > [data-wam="list"] {
   bottom: var(--wam-bar) !important;
 }
 
@@ -46,11 +47,11 @@ html.wam #pane-side {
   overflow-x: hidden !important;
 }
 
-html.wam #app .two > [data-wam="main"] {
+html.wam #app :is(.two, .three) > [data-wam="main"] {
   z-index: 350 !important;
 }
 
-html.wam #app .two > [data-wam="info"] {
+html.wam #app :is(.two, .three) > [data-wam="info"] {
   z-index: 360 !important;
 }
 
@@ -83,32 +84,32 @@ html.wam [data-testid="drawer-fullscreen"] {
 /* ---- Hide what is not on top ------------------------------------------- */
 
 /* Nothing open: the chat list (or a tab's list) and the tab bar */
-html.wam:not(.wam-chat) #app .two > [data-wam="main"],
+html.wam:not(.wam-chat) #app :is(.two, .three) > [data-wam="main"],
 html.wam:not(.wam-detail) [data-testid="drawer-middle"],
-html.wam:not(.wam-info) #app .two > [data-wam="info"],
+html.wam:not(.wam-info) #app :is(.two, .three) > [data-wam="info"],
 /* A conversation or a page: no list, no tab bar */
-html.wam.wam-chat #app .two > [data-wam="list"],
-html.wam.wam-chat #app .two > [data-wam="rail"],
+html.wam.wam-chat #app :is(.two, .three) > [data-wam="list"],
+html.wam.wam-chat #app :is(.two, .three) > [data-wam="rail"],
 html.wam.wam-chat [data-testid="drawer-left"],
-html.wam.wam-detail #app .two > [data-wam="list"],
-html.wam.wam-detail #app .two > [data-wam="rail"],
+html.wam.wam-detail #app :is(.two, .three) > [data-wam="list"],
+html.wam.wam-detail #app :is(.two, .three) > [data-wam="rail"],
 html.wam.wam-detail [data-testid="drawer-left"] {
   visibility: hidden !important;
 }
 
 /* The drawers' layer must not swallow taps meant for the chat below */
-html.wam #app .two > [data-wam="drawers"] {
+html.wam #app :is(.two, .three) > [data-wam="drawers"] {
   pointer-events: none !important;
 }
 
-html.wam.wam-tab #app .two > [data-wam="drawers"] [data-testid="drawer-left"],
-html.wam.wam-detail #app .two > [data-wam="drawers"] [data-testid="drawer-middle"] {
+html.wam.wam-tab #app :is(.two, .three) > [data-wam="drawers"] [data-testid="drawer-left"],
+html.wam.wam-detail #app :is(.two, .three) > [data-wam="drawers"] [data-testid="drawer-middle"] {
   pointer-events: auto !important;
 }
 
 /* ---- The left icon rail as a tab bar at the bottom -------------------- */
 
-html.wam #app .two > [data-wam="rail"] {
+html.wam #app :is(.two, .three) > [data-wam="rail"] {
   top: auto !important;
   height: var(--wam-bar) !important;
   z-index: 340 !important;
