@@ -55,6 +55,14 @@ html.wam #app :is(.two, .three) > [data-wam="info"] {
   z-index: 360 !important;
 }
 
+/* A page in the middle drawer over an open chat: the photo/video preview
+ * with its send button after Attach > Photos & videos. WhatsApp puts it in
+ * drawer-middle, in the drawers column, which sat below the conversation
+ * (z 350): the picked photo seemed to vanish. */
+html.wam.wam-detail #app :is(.two, .three) > [data-wam="drawers"] {
+  z-index: 355 !important;
+}
+
 /* The tab list (Calls, Status, ...) and drawers over the chat list, above
  * the tab bar; a page opened from them over everything. */
 html.wam [data-testid="drawer-left"],
